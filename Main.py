@@ -26,9 +26,10 @@ def manageUsersGroups(server_info, connected_clients):
             2. If a client is only a member of the default group and they have > 50 connections, upgrade their rank to 'User'.
     """
 
-    LOWEST_NON_DEFAULT_GROUP_ID = 7 #TODO remove magic number. Have application extrapolate this based on 2nd lowest sort id.
-
     server_groups = dict([(x["sgid"], x) for x in API.getServerGroups()]) #Get the list of server groups and their information (In the form of a dictionary using the group ID as a key for lookup purposes).
+
+    #Ugly means to find the next rank above the default one using "sortid".
+    LOWEST_NON_DEFAULT_GROUP_ID = max(server_groups, key=lambda x: int(server_groups[x]["sortid"]) if x is not server_info["virtualserver_default_server_group"] else -1)
 
     for client in connected_clients:
 
